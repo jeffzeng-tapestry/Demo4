@@ -1,12 +1,12 @@
 version: 3
 projects:
-- name: sampleapp-nonprod-us-east-1
+- name: activedirectory-sharedservices-us-east-1
   dir: .
   workflow: default
-  workspace: nonprod-us-east-1
+  workspace: sharedservices-us-east-1
   terraform_version: v0.12.6
-- name: sampleapp-prod-us-east-1
+- name: activedirectory-sharedservices-us-west-2
   dir: .
   workflow: default
-  workspace: prod-us-east-1
-  terraform_version: v0.12.6
+  workspace: sharedservices-us-west-2
+  terraform_version: v0.12.6 

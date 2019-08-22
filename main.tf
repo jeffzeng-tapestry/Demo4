@@ -61,15 +61,8 @@ data "aws_ami" "amazon-linux-2-ami" {
 # Resources
 ############
 
-#creates an EC2 instance
-resource "aws_instance" "helloworld" {
-  ami           = data.aws_ami.amazon-linux-2-ami.id
-  instance_type = "t2.micro"
-  subnet_id     = data.terraform_remote_state.vpc.outputs.private_subnets[0]
-
-  tags = {
-    Name = "helloworld-${data.aws_region.current.name}-ec2"
-  }
+resource "aws_security_group" "ActiveDirectory" {
+  
 }
 
 ################

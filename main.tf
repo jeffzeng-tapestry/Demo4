@@ -42,9 +42,9 @@ data "terraform_remote_state" "vpc" {
 }
 
 #This Data Source will find the latest version of the AWS Linux 2 AMI
-data "aws_ami" "amazon-linux-2-ami" {
+data "aws_ami" "tpr_windows" {
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["801119661308"]
 
   filter {
     name   = "architecture"
@@ -53,7 +53,7 @@ data "aws_ami" "amazon-linux-2-ami" {
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm*"]
+    values = ["Windows_Server-2012-R2_RTM-English-64Bit-Base-2019.06.12"]
   }
 }
 
@@ -62,39 +62,123 @@ data "aws_ami" "amazon-linux-2-ami" {
 ############
 
 resource "aws_security_group" "ActiveDirectory" {
-  
-}
+  name        = "${var.project}-${var.environment}-instance-sg"
+  description = "${var.project}-${var.environment}-instance-sg"
+  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
-################
-# Sample Module
-################
-#The below is a sample module being referneces from the Tapestry Github.
+  ingress {
+    description = "Allow inbound from internal networks"
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["172.16.0.0/12", "10.0.0.0/8", "156.146.0.0/16"]
+  }
 
+  egress {
+    description = "Allow all outbound"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
 
-/*
-module "vpc" { #Name of the module in the Root. If a module is being called multiple times in a root, it will need a unique name
-  source = "git@github.com:tapestryinc/TF-AWS-VPC-Module.git?ref=v1.7" #Module source with a ref for the GitHub Version
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-  name                             = var.environment
-  cidr                             = var.vpc_cidr
-  azs                              = var.azs
-  private_subnets                  = var.private_subnets
-  public_subnets                   = var.public_subnets
-  database_subnets                 = var.database_subnets
-  create_database_subnet_group     = var.create_database_subnet_group
-  privateexposed_subnets           = var.privateexposed_subnets
-  enable_nat_gateway               = var.enable_nat_gateway
-  enable_s3_endpoint               = var.enable_s3_endpoint
-  enable_dhcp_options              = var.enable_dhcp_options
-  dhcp_options_domain_name         = var.dhcp_options_domain_name
-  dhcp_options_domain_name_servers = var.dhcp_options_domain_name_servers
-  #enable_dns_hostnames            = var.enable_dns_hostnames
-  enable_dns_support               = var.enable_dns_support
-
-  #these tags are applied to all resources
   tags = {
-    Environment = "${var.environment}"
+    Name        = "${var.project}-${var.environment}-instance-sg"
+    Owner       = var.project
+    Environment = var.environment
   }
 }
-*/
 
+resource "aws_instance" "usawipwglbdc01" {
+  ami = data.aws_ami.tpr_windows.id
+  instance_type = "t2.large"
+  vpc_security_group_ids = [aws_security_group.ActiveDirectory.id]
+  key_name = var.ec2_key_name
+  iam_instance_profile = var.ec2_iam_instance_profile
+  subnet_id = var.subnet_usawipwglbdc01
+
+  tags = {
+    "Name" : var.global_dc_1_name
+    "backup" : "default"
+  }
+
+  root_block_device {
+    delete_on_termination = true
+    encrypted = true
+    kms_key_id = var.kms_key_id
+    volume_size = 70
+    volume_type = "gp2"
+  }
+
+  ebs_block_device {
+    delete_on_termination = true
+    device_name = "xvdb"
+    encrypted = true
+    kms_key_id = var.kms_key_id
+    volume_size = 100
+    volume_type = "gp2"
+  }
+}
+
+resource "aws_instance" "usawipwglbdc02" {
+  ami = data.aws_ami.tpr_windows.id
+  instance_type = "t2.large"
+  vpc_security_group_ids = [aws_security_group.ActiveDirectory.id]
+  key_name = var.ec2_key_name
+  iam_instance_profile = var.ec2_iam_instance_profile
+  subnet_id = var.subnet_usawipwglbdc02
+
+  tags = {
+    "Name" : var.global_dc_2_name
+    "backup" : "default"
+  }
+
+  root_block_device {
+    delete_on_termination = true
+    encrypted = true
+    kms_key_id = var.kms_key_id
+    volume_size = 70
+    volume_type = "gp2"
+  }
+
+  ebs_block_device {
+    delete_on_termination = true
+    device_name = "xvdb"
+    encrypted = true
+    kms_key_id = var.kms_key_id
+    volume_size = 100
+    volume_type = "gp2"
+  }
+}
+
+resource "aws_instance" "usawipwcohdc01" {
+  ami = data.aws_ami.tpr_windows.id
+  instance_type = "t2.large"
+  vpc_security_group_ids = [aws_security_group.ActiveDirectory.id]
+  key_name = var.ec2_key_name
+  iam_instance_profile = var.ec2_iam_instance_profile
+  subnet_id = var.subnet_usawipwcohdc01
+
+  tags = {
+    "Name" : var.coach_dc_1_name
+    "backup" : "default"
+  }
+
+  root_block_device {
+    delete_on_termination = true
+    encrypted = true
+    kms_key_id = var.kms_key_id
+    volume_size = 70
+    volume_type = "gp2"
+  }
+
+  ebs_block_device {
+    delete_on_termination = true
+    device_name = "xvdb"
+    encrypted = true
+    kms_key_id = var.kms_key_id
+    volume_size = 100
+    volume_type = "gp2"
+  }
+}

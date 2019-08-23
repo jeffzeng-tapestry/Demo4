@@ -34,7 +34,7 @@ data "terraform_remote_state" "vpc" {
   workspace = var.terraform_workspace
 
   config = {
-    region = var.region
+    region = var.state_bucket_region
     acl    = "private"
     bucket = var.state_bucket_name
     key    = var.state_key_vpc

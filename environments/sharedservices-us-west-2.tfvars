@@ -9,3 +9,5 @@ terraform_workspace = "sharedservices-us-west-2"
 state_bucket_name = "techservices-us-east-1-sharedservices-state-bucket"
 
 state_key_vpc = "vpc/terraform.tfstate"
+
+state_bucket_region = "us-east-1"

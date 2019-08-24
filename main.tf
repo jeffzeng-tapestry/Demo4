@@ -6,7 +6,7 @@ terraform {
   backend "s3" {
     region         = "us-east-1"
     bucket         = "techservices-us-east-1-sharedservices-state-bucket"
-    key            = "templaterepo/terraform.tfstate" #The key name before the / needs to be changed. This needs to be a unique name
+    key            = "activedirectory/terraform.tfstate"
     dynamodb_table = "techservices-sharedservices-state-table"
   }
 }
@@ -28,7 +28,7 @@ provider "aws" {
 #This Data Source will read in the current AWS Region
 data "aws_region" "current" {}
 
-#This Data Source will use look in the remote state bucket for VPC information from a previosly built VPC
+#This Data Source will use look in the remote state bucket for VPC information from a previously built VPC
 data "terraform_remote_state" "vpc" {
   backend   = "s3"
   workspace = var.terraform_workspace
@@ -41,7 +41,7 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
-#This Data Source will find the latest version of the AWS Linux 2 AMI
+#This Data Source will find the latest version of the Windows 2012 AMI from Amazon
 data "aws_ami" "tpr_windows" {
   most_recent = true
   owners      = ["801119661308"]

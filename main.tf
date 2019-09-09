@@ -25,9 +25,6 @@ provider "aws" {
 # Data Sources
 ###############
 
-#This Data Source will read in the current AWS Region
-data "aws_region" "current" {}
-
 #This Data Source will use look in the remote state bucket for VPC information from a previously built VPC
 data "terraform_remote_state" "vpc" {
   backend   = "s3"
@@ -74,15 +71,6 @@ resource "aws_security_group" "ActiveDirectory" {
     cidr_blocks = ["172.16.0.0/12", "10.0.0.0/8", "156.146.0.0/16"]
   }
 
-  egress {
-    description = "Allow all outbound"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name        = "${var.project}-${var.environment}-instance-sg"
     Owner       = var.project
@@ -90,95 +78,71 @@ resource "aws_security_group" "ActiveDirectory" {
   }
 }
 
-resource "aws_instance" "usawipwglbdc01" {
-  ami = data.aws_ami.tpr_windows.id
-  instance_type = "t2.large"
-  vpc_security_group_ids = [aws_security_group.ActiveDirectory.id]
-  key_name = var.ec2_key_name
+module "global_dc_1" {
+  source               = "git@github.com:tapestryinc/TF-AWS-EC2-Module.git?ref=v2.0.7"
+  name                 = var.global_dc_1_name
+  ami                  = data.aws_ami.tpr_windows.id
+  instance_type        = "t2.large"
+  key_name             = var.ec2_key_name
+  subnet_id            = var.subnet_usawipwglbdc01
+  os_type              = "windows"
+  vpc_alias            = var.terraform_workspace
+  security_group_ids   = [aws_security_group.ActiveDirectory.id]
   iam_instance_profile = var.ec2_iam_instance_profile
-  subnet_id = var.subnet_usawipwglbdc01
-
-  tags = {
-    "Name" : var.global_dc_1_name
-    "backup" : "default"
-  }
-
-  root_block_device {
-    delete_on_termination = true
-    encrypted = true
-    kms_key_id = var.kms_key_id
-    volume_size = 70
-    volume_type = "gp2"
-  }
-
-  ebs_block_device {
-    delete_on_termination = true
-    device_name = "xvdb"
-    encrypted = true
-    kms_key_id = var.kms_key_id
-    volume_size = 100
-    volume_type = "gp2"
+  addl_ebs_volumes = {
+    "data-ebs" = {
+      size        = 100
+      type        = "gp2"
+      device_name = "xvdb"
+      encrypted   = true
+      kms_key_id  = var.kms_key_id
+      snapshot_id = null
+    }
   }
 }
 
-resource "aws_instance" "usawipwglbdc02" {
-  ami = data.aws_ami.tpr_windows.id
-  instance_type = "t2.large"
-  vpc_security_group_ids = [aws_security_group.ActiveDirectory.id]
-  key_name = var.ec2_key_name
+module "global_dc_2" {
+  source               = "git@github.com:tapestryinc/TF-AWS-EC2-Module.git?ref=v2.0.7"
+  name                 = var.global_dc_2_name
+  ami                  = data.aws_ami.tpr_windows.id
+  instance_type        = "t2.large"
+  key_name             = var.ec2_key_name
+  subnet_id            = var.subnet_usawipwglbdc02
+  os_type              = "windows"
+  vpc_alias            = var.terraform_workspace
+  security_group_ids   = [aws_security_group.ActiveDirectory.id]
   iam_instance_profile = var.ec2_iam_instance_profile
-  subnet_id = var.subnet_usawipwglbdc02
-
-  tags = {
-    "Name" : var.global_dc_2_name
-    "backup" : "default"
-  }
-
-  root_block_device {
-    delete_on_termination = true
-    encrypted = true
-    kms_key_id = var.kms_key_id
-    volume_size = 70
-    volume_type = "gp2"
-  }
-
-  ebs_block_device {
-    delete_on_termination = true
-    device_name = "xvdb"
-    encrypted = true
-    kms_key_id = var.kms_key_id
-    volume_size = 100
-    volume_type = "gp2"
+  addl_ebs_volumes = {
+    "data-ebs" = {
+      size        = 100
+      type        = "gp2"
+      device_name = "xvdb"
+      encrypted   = true
+      kms_key_id  = var.kms_key_id
+      snapshot_id = null
+    }
   }
 }
 
-resource "aws_instance" "usawipwcohdc01" {
-  ami = data.aws_ami.tpr_windows.id
-  instance_type = "t2.large"
-  vpc_security_group_ids = [aws_security_group.ActiveDirectory.id]
-  key_name = var.ec2_key_name
+module "coach_dc_1" {
+  source               = "git@github.com:tapestryinc/TF-AWS-EC2-Module.git?ref=v2.0.7"
+  name                 = var.coach_dc_1_name
+  ami                  = data.aws_ami.tpr_windows.id
+  instance_type        = "t2.large"
+  key_name             = var.ec2_key_name
+  subnet_id            = var.subnet_usawipwcohdc01
+  os_type              = "windows"
+  vpc_alias            = var.terraform_workspace
+  security_group_ids   = [aws_security_group.ActiveDirectory.id]
   iam_instance_profile = var.ec2_iam_instance_profile
-  subnet_id = var.subnet_usawipwcohdc01
-
-  tags = {
-    "Name" : var.coach_dc_1_name
-    "backup" : "default"
-  }
-
-  root_block_device {
-    delete_on_termination = true
-    encrypted = true
-    kms_key_id = var.kms_key_id
-    volume_size = 70
-    volume_type = "gp2"
-  }
-
-  ebs_block_device {
-    delete_on_termination = true
-    device_name = "xvdb"
-    encrypted = true
-    kms_key_id = var.kms_key_id
-    volume_size = 100
-    volume_type = "gp2"
+  addl_ebs_volumes = {
+    "data-ebs" = {
+      size        = 100
+      type        = "gp2"
+      device_name = "xvdb"
+      encrypted   = true
+      kms_key_id  = var.kms_key_id
+      snapshot_id = null
+    }
   }
 }

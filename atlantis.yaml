@@ -4,9 +4,9 @@ projects:
   dir: .
   workflow: default
   workspace: sharedservices-us-east-1
-  terraform_version: v0.12.6
+  terraform_version: v0.12.8
 - name: activedirectory-sharedservices-us-west-2
   dir: .
   workflow: default
   workspace: sharedservices-us-west-2
-  terraform_version: v0.12.6 
+  terraform_version: v0.12.8

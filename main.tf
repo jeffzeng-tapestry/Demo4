@@ -28,7 +28,7 @@ provider "aws" {
 #This Data Source will use look in the remote state bucket for VPC information from a previously built VPC
 data "terraform_remote_state" "vpc" {
   backend   = "s3"
-  workspace = var.terraform_workspace
+  workspace = local.account_workspace
 
   config = {
     region = var.state_bucket_region
@@ -52,6 +52,24 @@ data "aws_ami" "tpr_windows" {
     name   = "name"
     values = ["Windows_Server-2012-R2_RTM-English-64Bit-Base-2019.06.12"]
   }
+}
+
+# This module codifies the tags assigned to resources.
+module "tags" {
+  source = "git@github.com:tapestryinc/TF-AWS-Tags-Module.git?ref=v1.2.5"
+
+  dr_tier              = var.dr_tier
+  cost_center          = var.cost_center
+  application_id       = var.application_id
+  project_name         = var.project_name
+  app_partner          = var.app_partner
+  cpm_backup           = var.cpm_backup
+  environment          = var.environment
+  cloud_custodian_tags = var.cloud_custodian_tags
+  compliance           = var.compliance
+  brand                = var.brand
+  os                   = var.os
+  tf_repo              = var.tf_repo
 }
 
 ############
@@ -145,4 +163,27 @@ module "coach_dc_1" {
       snapshot_id = null
     }
   }
+}
+
+module "probe" {
+  source               = "git@github.com:tapestryinc/TF-AWS-EC2-Module.git?ref=v2.0.7"
+  ami                  = var.probe_instance_details.ami
+  instance_type        = var.probe_instance_details.instance_type
+  iam_instance_profile = var.probe_instance_details.iam_instance_profile
+  key_name             = var.probe_instance_details.key_name
+  os_type              = "windows"
+  name                 = var.probe_instance_details.name
+  subnet_id            = local.subnet_map[var.probe_instance_details.az_letter]
+  addl_ebs_volumes     = var.probe_volumes
+  tags                 = module.tags.tags
+  vpc_alias            = local.account_workspace
+}
+
+locals {
+  subnet_map            = {
+    a = data.terraform_remote_state.vpc.outputs.private_subnets[0]
+    b = data.terraform_remote_state.vpc.outputs.private_subnets[1]
+    c = data.terraform_remote_state.vpc.outputs.private_subnets[2]
+  }
+  account_workspace = "${var.environment}-${var.region}"
 }

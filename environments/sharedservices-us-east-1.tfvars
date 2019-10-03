@@ -25,3 +25,20 @@ global_dc_1_name = "usawipwglbdc01"
 global_dc_2_name = "usawipwglbdc02"
 
 coach_dc_1_name = "usawipwcohdc01"
+
+probe_instance_details = {
+  "ami" : "ami-0d41aee8a57fdb850",
+  "instance_type" : "t2.large",
+  "iam_instance_profile" : "TEST_SSM_ROLE",
+  "name" : "usawipwinfapp01",
+  "key_name" : "windowsamiaccess",
+  "az_letter" : "c"
+}
+
+probe_volumes = {
+  "data-ebs" = {
+    size        = 100
+    type        = "gp2"
+    device_name = "xvdb"
+  }
+}

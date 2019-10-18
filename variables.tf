@@ -113,61 +113,23 @@ variable "probe_volumes" {
   default     = {}
 }
 
-## tags
-variable "dr_tier" {
-  description = "Business Continuity - specify the disaster recovery tiers - bronze, silver, gold, platinum - engineering/design"
-  type        = string
-  default     = "Bronze"
-}
-variable "cost_center" {
-  description = "Governance - specifify the cost center - 12345678, 99999999 - engineering/design or alfabet"
-  type        = string
-  default     = "00000000"
-}
-variable "application_id" {
-  description = "IT Portfolio - Map to application ID in Alfabet - App-230; app-451 - alfabet"
-  type        = string
-  default     = ""
-}
-variable "project_name" {
-  description = "IT Portfolio - Name of project/application - Found; APTOS; C360 - feed from alfabet"
-  type        = string
-  default     = "activedirectory"
-}
-variable "app_partner" {
-  description = "Operations - Application partner/ distribution group - John Doe - feed from alfabet"
-  type        = string
-  default     = "Active Directory"
-}
-variable "cpm_backup" {
-  description = "Operations - identify the method used for backup of this resource - policy1, policy2, policy3 - engineering/design"
-  type        = string
-  default     = "non_prod_us_east_bronze_15"
-}
-variable "cloud_custodian_tags" {
-  description = "Operations - Define which cloud custodian policies apply to this resource - Autoparking, PCI, Tagging, Autoscaling - engineering/design"
-  type        = string
-  default     = ""
-}
-variable "compliance" {
-  description = "Security+Governance - Is this resource subject to any compliance requirements? Select all that apply. - pci, sox, gdpr, pii, none - engineering/design"
-  type        = string
-  default     = ""
-}
-variable "brand" {
-  description = "IT Portfolio - Identify which Brand this resource services - TPR, COH, KS, SW - feed from alfabet"
-  type        = string
-  default     = "TPR"
-}
-variable "os" {
-  description = "Operations - Which OS is installed? - win2016; win2012,rhel7.0,azlinux - engineering/design"
-  type        = string
-  default     = "windows"
-}
-variable "tf_repo" {
-  description = "Assigned to TFRepo tag (repo remote origin path)"
-  type        = string
-  default     = "tf-aws-activedirectory-root"
+variable "tags" {
+  description = "Tag settings for this project"
+  type        = map
+  default = {
+    dr_tier              = "Bronze"
+    cost_center          = "00000000"
+    application_id       = ""
+    project_name         = "activedirectory"
+    app_partner          = "Active Directory"
+    cpm_backup           = "non_prod_us_east_bronze_15"
+    environment          = "sharedservices"
+    cloud_custodian_tags = ""
+    compliance           = ""
+    brand                = "TPR"
+    os                   = "win2012"
+    tf_repo              = "TF-AWS-ActiveDirectory-Root"
+  }
 }
 
 variable "dc_ami" {

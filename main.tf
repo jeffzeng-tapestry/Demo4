@@ -38,40 +38,6 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
-#This Data Source will find the latest version of the Windows 2012 AMI from Amazon
-#data "aws_ami" "tpr_windows" {
-#  most_recent = true
-#  owners      = ["801119661308"]
-
-#  filter {
-#    name   = "architecture"
-#    values = ["x86_64"]
-#  }
-
-#  filter {
-#    name   = "name"
-#    values = ["Windows_Server-2012-R2_RTM-English-64Bit-Base"]
-#  }
-#}
-
-# This module codifies the tags assigned to resources.
-module "tags" {
-  source = "git@github.com:tapestryinc/TF-AWS-Tags-Module.git?ref=v1.2.6"
-
-  dr_tier              = var.dr_tier
-  cost_center          = var.cost_center
-  application_id       = var.application_id
-  project_name         = var.project_name
-  app_partner          = var.app_partner
-  cpm_backup           = var.cpm_backup
-  environment          = var.environment
-  cloud_custodian_tags = var.cloud_custodian_tags
-  compliance           = var.compliance
-  brand                = var.brand
-  os                   = var.os
-  tf_repo              = var.tf_repo
-}
-
 ############
 # Resources
 ############
@@ -117,6 +83,7 @@ module "global_dc_1" {
       snapshot_id = null
     }
   }
+  tags = merge({"os" = "win2012"}, module.tags.tags)
 }
 
 module "global_dc_2" {
@@ -140,6 +107,7 @@ module "global_dc_2" {
       snapshot_id = null
     }
   }
+  tags = merge({"os" = "win2012"}, module.tags.tags)
 }
 
 module "coach_dc_1" {
@@ -163,6 +131,7 @@ module "coach_dc_1" {
       snapshot_id = null
     }
   }
+  tags = merge({"os" = "win2012"}, module.tags.tags)
 }
 
 module "probe" {
@@ -175,7 +144,7 @@ module "probe" {
   name                 = var.probe_instance_details.name
   subnet_id            = local.subnet_map[var.probe_instance_details.az_letter]
   addl_ebs_volumes     = var.probe_volumes
-  tags                 = module.tags.tags
+  tags                 = merge({"os" = "win2016"}, module.tags.tags)
   vpc_alias            = local.account_workspace
 }
 

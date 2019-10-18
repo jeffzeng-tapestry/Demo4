@@ -39,24 +39,24 @@ data "terraform_remote_state" "vpc" {
 }
 
 #This Data Source will find the latest version of the Windows 2012 AMI from Amazon
-data "aws_ami" "tpr_windows" {
-  most_recent = true
-  owners      = ["801119661308"]
+#data "aws_ami" "tpr_windows" {
+#  most_recent = true
+#  owners      = ["801119661308"]
 
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
+#  filter {
+#    name   = "architecture"
+#    values = ["x86_64"]
+#  }
 
-  filter {
-    name   = "name"
-    values = ["Windows_Server-2012-R2_RTM-English-64Bit-Base-2019.06.12"]
-  }
-}
+#  filter {
+#    name   = "name"
+#    values = ["Windows_Server-2012-R2_RTM-English-64Bit-Base"]
+#  }
+#}
 
 # This module codifies the tags assigned to resources.
 module "tags" {
-  source = "git@github.com:tapestryinc/TF-AWS-Tags-Module.git?ref=v1.2.5"
+  source = "git@github.com:tapestryinc/TF-AWS-Tags-Module.git?ref=v1.2.6"
 
   dr_tier              = var.dr_tier
   cost_center          = var.cost_center
@@ -99,7 +99,7 @@ resource "aws_security_group" "ActiveDirectory" {
 module "global_dc_1" {
   source               = "git@github.com:tapestryinc/TF-AWS-EC2-Module.git?ref=v2.0.7"
   name                 = var.global_dc_1_name
-  ami                  = data.aws_ami.tpr_windows.id
+  ami                  = var.dc_ami
   instance_type        = "t2.large"
   key_name             = var.ec2_key_name
   subnet_id            = var.subnet_usawipwglbdc01
@@ -122,7 +122,7 @@ module "global_dc_1" {
 module "global_dc_2" {
   source               = "git@github.com:tapestryinc/TF-AWS-EC2-Module.git?ref=v2.0.7"
   name                 = var.global_dc_2_name
-  ami                  = data.aws_ami.tpr_windows.id
+  ami                  = var.dc_ami
   instance_type        = "t2.large"
   key_name             = var.ec2_key_name
   subnet_id            = var.subnet_usawipwglbdc02
@@ -145,7 +145,7 @@ module "global_dc_2" {
 module "coach_dc_1" {
   source               = "git@github.com:tapestryinc/TF-AWS-EC2-Module.git?ref=v2.0.7"
   name                 = var.coach_dc_1_name
-  ami                  = data.aws_ami.tpr_windows.id
+  ami                  = var.dc_ami
   instance_type        = "t2.large"
   key_name             = var.ec2_key_name
   subnet_id            = var.subnet_usawipwcohdc01

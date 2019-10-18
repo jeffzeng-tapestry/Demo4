@@ -1,10 +1,10 @@
-region = "us-east-1"
+region = "ap-southeast-1"
 
 role_arn = "arn:aws:iam::018907257838:role/techservices-terraform-role"
 
 environment = "sharedservices"
 
-terraform_workspace = "sharedservices-us-east-1"
+terraform_workspace = "sharedservices-ap-southeast-1"
 
 state_bucket_name = "techservices-us-east-1-sharedservices-state-bucket"
 
@@ -12,27 +12,27 @@ state_key_vpc = "vpc/terraform.tfstate"
 
 state_bucket_region = "us-east-1"
 
-subnet_usawipwcohdc01 = "subnet-07744da281a1ccd4d"
+subnet_usawipwcohdc01 = "subnet-028ae003cd573bc1c"
 
-subnet_usawipwglbdc01 = "subnet-054c247874094a088"
+subnet_usawipwglbdc01 = "subnet-0abd5da1a44c64f81"
 
-subnet_usawipwglbdc02 = "subnet-01db58b4fde1350eb"
+subnet_usawipwglbdc02 = "subnet-085ba6757eb1bc3e2"
 
-kms_key_id = "arn:aws:kms:us-east-1:018907257838:key/67ffbc8f-00ea-494d-aac1-8ac4e39c25ad"
+kms_key_id = "arn:aws:kms:us-east-1:018907257838:alias/aws/ebs"
 
-global_dc_1_name = "usawipwglbdc01"
+global_dc_1_name = "apawipwglbdc01"
 
-global_dc_2_name = "usawipwglbdc02"
+global_dc_2_name = "apawipwglbdc02"
 
-coach_dc_1_name = "usawipwcohdc01"
+coach_dc_1_name = "apawipwcohdc01"
 
-dc_ami = "ami-0e38a7fb8cd1e16fe"
+dc_ami = "ami-003bcb0466a4c1ee8"
 
 probe_instance_details = {
-  "ami" : "ami-0d41aee8a57fdb850",
+  "ami" : "ami-0259c5dbce44ecfff",
   "instance_type" : "t2.large",
   "iam_instance_profile" : "TEST_SSM_ROLE",
-  "name" : "usawipwinfapp01",
+  "name" : "apawipwinfapp01",
   "key_name" : "windowsamiaccess",
   "az_letter" : "c"
 }

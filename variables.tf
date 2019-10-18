@@ -169,3 +169,8 @@ variable "tf_repo" {
   type        = string
   default     = "tf-aws-activedirectory-root"
 }
+
+variable "dc_ami" {
+  description = "AMI to use for Domain Controllers"
+  type        = string
+}

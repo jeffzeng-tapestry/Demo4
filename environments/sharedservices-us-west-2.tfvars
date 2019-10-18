@@ -26,6 +26,8 @@ global_dc_2_name = "usawipwglbdc04"
 
 coach_dc_1_name = "usawipwcohdc02"
 
+dc_ami = "ami-0a5d3dc8c24be5e7e"
+
 probe_instance_details = {
   "ami" : "ami-0d705356e2616369c",
   "instance_type" : "t2.large",

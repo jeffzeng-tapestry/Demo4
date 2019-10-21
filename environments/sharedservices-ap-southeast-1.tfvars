@@ -44,3 +44,5 @@ probe_volumes = {
     device_name = "xvdb"
   }
 }
+
+root_volume_size = 70

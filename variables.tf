@@ -136,3 +136,9 @@ variable "dc_ami" {
   description = "AMI to use for Domain Controllers"
   type        = string
 }
+
+variable "root_volume_size" {
+  description = "If set, overrides the default root volume size from the AMI"
+  type        = number
+  default     = null
+}

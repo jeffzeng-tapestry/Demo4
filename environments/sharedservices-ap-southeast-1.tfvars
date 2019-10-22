@@ -18,7 +18,7 @@ subnet_usawipwglbdc01 = "subnet-0abd5da1a44c64f81"
 
 subnet_usawipwglbdc02 = "subnet-085ba6757eb1bc3e2"
 
-kms_key_id = "arn:aws:kms:us-east-1:018907257838:alias/aws/ebs"
+kms_key_id = "arn:aws:kms:ap-southeast-1:018907257838:alias/tpr/ebs"
 
 global_dc_1_name = "apawipwglbdc01"
 
